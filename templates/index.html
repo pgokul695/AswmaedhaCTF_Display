@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASHWAMEDHA'26 - CTF Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0015 0%, #1a0a2e 20%, #2d1b4e 40%, #1a0a2e 60%, #0a0015 100%);
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            height: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Particle Background */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(155, 89, 182, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0.3;
+            }
+
+            25% {
+                transform: translate(100px, -100px) rotate(90deg);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translate(-50px, -200px) rotate(180deg);
+                opacity: 0.3;
+            }
+
+            75% {
+                transform: translate(-150px, -100px) rotate(270deg);
+                opacity: 0.6;
+            }
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 6vw;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 2px #c084fc;
+            text-stroke: 2px #c084fc;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(192, 132, 252, 0.3);
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #c084fc;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            text-shadow: 0 0 20px rgba(192, 132, 252, 0.5);
+        }
+
+        /* Timer Section */
+        .timer-section {
+            text-align: center;
+            margin: 60px 0;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer-label {
+            font-size: 28px;
+            color: #c084fc;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .timer-unit {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 15px;
+            padding: 35px 45px;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timer-unit:hover {
+            transform: scale(1.05);
+            border-color: #c084fc;
+            box-shadow: 0 0 30px rgba(192, 132, 252, 0.4);
+        }
+
+        .timer-value {
+            display: block;
+            font-size: 96px;
+            font-weight: bold;
+            color: #c084fc;
+            text-shadow: 0 0 20px rgba(192, 132, 252, 0.6);
+        }
+
+        .timer-unit-label {
+            display: block;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        .timer-status {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 20px;
+        }
+
+        /* Prize Section */
+        .prize-section {
+            text-align: center;
+            margin: 60px 0;
+            animation: fadeInUp 1.5s ease-out 0.3s both;
+        }
+
+        .prize-box {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.2), rgba(155, 89, 182, 0.2));
+            border: 3px solid rgba(233, 30, 99, 0.5);
+            border-radius: 20px;
+            padding: 40px 80px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(233, 30, 99, 0.3);
+        }
+
+        .prize-label {
+            font-size: 24px;
+            color: #e91e63;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+        }
+
+        .prize-amount {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #e91e63, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(233, 30, 99, 0.5);
+        }
+
+        /* Encouragement Carousel Section */
+        .content-scroll-section {
+            margin: 60px auto;
+            max-width: 900px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .scroll-title {
+            font-size: 36px;
+            text-align: center;
+            color: #c084fc;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .encouragement-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(192, 132, 252, 0.2);
+            border-radius: 15px;
+            padding: 30px 40px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 20px rgba(192, 132, 252, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .encouragement-card.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+
+
+        .encouragement-text {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            line-height: 1.6;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+            }
+
+            100% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                    0 0 15px rgba(192, 132, 252, 0.2);
+            }
+        }
+
+        .carousel-indicators {
+            display: none;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+            transform: scale(1.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 12vw;
+                letter-spacing: 8px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+                letter-spacing: 4px;
+            }
+
+            .timer-unit {
+                min-width: 100px;
+                padding: 20px 25px;
+            }
+
+            .timer-value {
+                font-size: 48px;
+            }
+
+            .prize-amount {
+                font-size: 60px;
+            }
+
+            .encouragement-card {
+                padding: 30px 20px;
+            }
+
+            .encouragement-text {
+                font-size: 24px;
+            }
+
+            .scroll-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="main-title">CAPTURE THE FLAG</h1>
+            <p class="subtitle">Ashwamedha'26</p>
+        </div>
+
+        <!-- Timer Section -->
+        <div class="timer-section">
+            <div class="timer-label">Time Remaining</div>
+            <div class="timer-display">
+                <div class="timer-unit">
+                    <span class="timer-value" id="hours">00</span>
+                    <span class="timer-unit-label">Hours</span>
+                </div>
+                <div class="timer-unit">
+                    <span class="timer-value" id="minutes">00</span>
+                    <span class="timer-unit-label">Minutes</span>
+                </div>
+                <div class="timer-unit">
+                    <span class="timer-value" id="seconds">00</span>
+                    <span class="timer-unit-label">Seconds</span>
+                </div>
+            </div>
+            <div class="timer-status" id="timer-status">Waiting for event to start...</div>
+        </div>
+
+
+
+        <!-- Encouragement Carousel -->
+        <div class="content-scroll-section">
+            <h2 class="scroll-title">Stay Motivated</h2>
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Every expert was once a beginner. Don't be afraid to try!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">The best way to learn is by doing. Dive in and explore!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Focus on progress, not perfection. Every flag counts!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Your persistence is your superpower. Keep pushing forward!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Think outside the box. The solution is closer than you think!
+                        </div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Believe in yourself. You've got this!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Every challenge is an opportunity to grow stronger!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Learning never stops. Embrace the journey!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Great ideas come from those who dare to experiment!</div>
+                    </div>
+
+                    <div class="encouragement-card">
+                        <div class="encouragement-text">Success is the sum of small efforts repeated day in and day out!
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = Math.random() * 5 + 2 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Fade carousel for encouragement cards
+
+        // Fade carousel for encouragement cards
+        let currentSlide = 0;
+        const cards = document.querySelectorAll('.encouragement-card');
+        const totalSlides = cards.length;
+
+        // Show first card
+        if (cards.length > 0) {
+            cards[0].classList.add('active');
+        }
+
+        function showNextCard() {
+            // Hide current card
+            cards[currentSlide].classList.remove('active');
+
+            // Move to next card
+            currentSlide = (currentSlide + 1) % totalSlides;
+
+            // Show next card
+            cards[currentSlide].classList.add('active');
+
+            // Schedule next transition
+            scheduleNextCard();
+        }
+
+        function scheduleNextCard() {
+            // Random interval between 10-20 seconds
+            const interval = Math.floor(Math.random() * 10000) + 10000;
+            setTimeout(showNextCard, interval);
+        }
+
+        // Start the carousel
+        if (totalSlides > 1) {
+            scheduleNextCard();
+        }
+
+        // Timer management
+        let remainingSeconds = 7200; // 2 hours
+        let isRunning = false;
+        let timerInterval = null;
+        const API_KEY = 'ctf_admin_2026_ashwamedha';
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+
+            // Update status
+            const statusEl = document.getElementById('timer-status');
+            if (!isRunning) {
+                statusEl.textContent = 'Waiting for event to start...';
+                statusEl.style.color = 'rgba(255, 255, 255, 0.6)';
+            } else if (remainingSeconds > 0) {
+                statusEl.textContent = 'Event in progress - Good luck!';
+                statusEl.style.color = '#00ffff';
+            } else {
+                statusEl.textContent = 'Event has ended!';
+                statusEl.style.color = '#ff00ff';
+            }
+        }
+
+        // Fetch timer status from server
+        async function fetchTimerStatus() {
+            try {
+                const response = await fetch('/api/timer/status');
+                const data = await response.json();
+
+                isRunning = data.is_running;
+                remainingSeconds = data.remaining_seconds;
+
+                updateTimerDisplay();
+
+                // Start local countdown if timer is running
+                if (isRunning && !timerInterval) {
+                    startLocalCountdown();
+                } else if (!isRunning && timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            } catch (error) {
+                console.error('Error fetching timer status:', error);
+            }
+        }
+
+        // Start local countdown
+        function startLocalCountdown() {
+            if (timerInterval) return;
+
+            timerInterval = setInterval(() => {
+                if (remainingSeconds > 0) {
+                    remainingSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        // Sync with server (every 30 seconds)
+        async function syncWithServer() {
+            if (!isRunning) return;
+
+            try {
+                const response = await fetch('/api/timer/sync', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        remaining_seconds: remainingSeconds
+                    })
+                });
+
+                const data = await response.json();
+
+                // If server corrected our time, update it
+                if (data.corrected) {
+                    console.log(`Timer corrected. Drift: ${data.drift_seconds}s`);
+                    remainingSeconds = data.server_remaining;
+                    updateTimerDisplay();
+                }
+            } catch (error) {
+                console.error('Error syncing with server:', error);
+            }
+        }
+
+        // Initialize timer
+        updateTimerDisplay();
+        fetchTimerStatus();
+
+        // Fetch status every 5 seconds
+        setInterval(fetchTimerStatus, 5000);
+
+        // Sync with server every 30 seconds
+        setInterval(syncWithServer, 30000);
+    </script>
+</body>
+
+</html>

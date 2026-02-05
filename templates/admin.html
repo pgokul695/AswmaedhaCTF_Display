@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CTF Timer Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0a0e27 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .login-section {
+            margin-bottom: 30px;
+        }
+
+        .control-section {
+            display: none;
+        }
+
+        .control-section.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #ff00ff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="password"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff0066, #ff6600);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #00ff88, #00ffff);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffaa00, #ff00ff);
+        }
+
+        .status-display {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 0, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .status-label {
+            color: #ff00ff;
+        }
+
+        .status-value {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 48px;
+            color: #00ffff;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff6666;
+            text-align: center;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid rgba(0, 255, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #66ff66;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h1>🎮 CTF Timer Control</h1>
+
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <div id="loginError" class="error-message hidden"></div>
+            <div class="input-group">
+                <label for="password">Admin Password</label>
+                <input type="password" id="password" placeholder="Enter admin password">
+            </div>
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+
+        <!-- Control Section -->
+        <div class="control-section" id="controlSection">
+            <div id="message" class="hidden"></div>
+
+            <div class="status-display">
+                <h3 style="color: #ff00ff; margin-bottom: 15px;">Timer Status</h3>
+                <div class="timer-display" id="adminTimerDisplay">00:00:00</div>
+                <div class="status-item">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value" id="timerStatus">Stopped</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Duration:</span>
+                    <span class="status-value" id="timerDuration">2 hours</span>
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="startTimer()">▶️ Start Timer</button>
+            <button class="btn btn-danger" onclick="stopTimer()">⏸️ Stop Timer</button>
+            <button class="btn btn-warning" onclick="resetTimer()">🔄 Reset Timer (2 Hours)</button>
+
+            <div class="input-group" style="margin-top: 30px;">
+                <label for="customMinutes">Set Custom Duration (Minutes)</label>
+                <input type="number" id="customMinutes" placeholder="e.g., 120 for 2 hours" min="1" max="300">
+            </div>
+            <button class="btn" onclick="setCustomDuration()">Set Custom Duration</button>
+
+            <button class="btn" onclick="logout()"
+                style="margin-top: 30px; background: rgba(255, 255, 255, 0.1);">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'ctf2026admin';
+        let apiKey = '';
+        let statusInterval = null;
+
+        function login() {
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (password === ADMIN_PASSWORD) {
+                apiKey = 'ctf_admin_2026_ashwamedha';
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('controlSection').classList.add('active');
+                errorEl.classList.add('hidden');
+                startStatusUpdates();
+            } else {
+                errorEl.textContent = 'Invalid password!';
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            apiKey = '';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('controlSection').classList.remove('active');
+            document.getElementById('password').value = '';
+            stopStatusUpdates();
+        }
+
+        function showMessage(text, isError = false) {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = isError ? 'error-message' : 'success-message';
+            setTimeout(() => msgEl.classList.add('hidden'), 3000);
+        }
+
+        async function startTimer() {
+            try {
+                const response = await fetch('/api/timer/start', {
+                    method: 'POST',
+                    headers: { 'X-API-Key': apiKey }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Timer started successfully!');
+                    updateStatus();
+                } else {
+                    showMessage(data.error || 'Failed to start timer', true);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, true);
+            }
+        }
+
+        async function stopTimer() {
+            try {
+                const response = await fetch('/api/timer/stop', {
+                    method: 'POST',
+                    headers: { 'X-API-Key': apiKey }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Timer stopped!');
+                    updateStatus();
+                } else {
+                    showMessage(data.error || 'Failed to stop timer', true);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, true);
+            }
+        }
+
+        async function resetTimer() {
+            try {
+                const response = await fetch('/api/timer/reset', {
+                    method: 'POST',
+                    headers: { 'X-API-Key': apiKey }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('Timer reset to 2 hours!');
+                    updateStatus();
+                } else {
+                    showMessage(data.error || 'Failed to reset timer', true);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, true);
+            }
+        }
+
+        async function setCustomDuration() {
+            const minutes = parseInt(document.getElementById('customMinutes').value);
+            if (!minutes || minutes < 1) {
+                showMessage('Please enter a valid duration', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/timer/set-duration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify({ duration_minutes: minutes })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(`Timer duration set to ${minutes} minutes!`);
+                    updateStatus();
+                } else {
+                    showMessage(data.error || 'Failed to set duration', true);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, true);
+            }
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/timer/status');
+                const data = await response.json();
+
+                const hours = Math.floor(data.remaining_seconds / 3600);
+                const minutes = Math.floor((data.remaining_seconds % 3600) / 60);
+                const seconds = data.remaining_seconds % 60;
+
+                document.getElementById('adminTimerDisplay').textContent =
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                document.getElementById('timerStatus').textContent = data.is_running ? 'Running' : 'Stopped';
+                document.getElementById('timerDuration').textContent =
+                    `${Math.floor(data.duration_seconds / 60)} minutes`;
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        function startStatusUpdates() {
+            updateStatus();
+            statusInterval = setInterval(updateStatus, 1000);
+        }
+
+        function stopStatusUpdates() {
+            if (statusInterval) {
+                clearInterval(statusInterval);
+                statusInterval = null;
+            }
+        }
+    </script>
+</body>
+
+</html>
